@@ -22,20 +22,27 @@ app.use(
 );
 
 app.get("/", async (req, res) => {
-    try {
+  const currencies = ["USD", "EUR", "CNY", "DKK", "GBP", "JPY", "KRW", "NOK"];
+  const rates = {};
+
+  try {
+    // Loop through each currency and get its conversion to BRL
+    for (const currency of currencies) {
       const response = await axios.get(
-        "https://api.frankfurter.dev/v1/latest?base=USD"
+        `https://api.frankfurter.app/latest?from=${currency}&to=BRL`
       );
-      const result = response.data;
-      console.log(result);
-      res.render("index.ejs", { rate: result.rates.BRL });
-    } catch (error) {
-      console.error("Failed to make request:", error.message);
-      res.render("index.ejs", {
-        error: error.message,
-      });
+      rates[currency] = response.data.rates.BRL;
     }
-  });
+
+    res.render("index.ejs", { rates });
+  } catch (error) {
+    console.error("Failed to fetch exchange rates:", error.message);
+    res.render("index.ejs", {
+      error: error.message,
+      rates: {},
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

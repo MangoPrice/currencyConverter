@@ -13,7 +13,135 @@
       rel="stylesheet"
     />
   </head>
-  <body class="bg-light text-dark">
-    <div><p><%= locals.rate %></p></div>
+
+  <body
+    class="bg-light text-dark d-flex justify-content-center align-items-center vh-100"
+  >
+    <div>
+      <div id="conversionResult" class="text-center fw-bold mb-3 fs-5"></div>
+      <div
+        class="dropdown-menu d-block position-static border-0 pt-0 mx-0 rounded-3 shadow overflow-hidden w-280px"
+        data-bs-theme="dark"
+      >
+        <form class="p-2 mb-2 bg-dark border-bottom border-dark">
+          <input
+            type="search"
+            id="amountInput"
+            class="form-control bg-dark"
+            autocomplete="false"
+            placeholder="Enter amount to convert:"
+          />
+        </form>
+        <ul class="list-unstyled mb-0">
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-success rounded-circle p-1"></span>
+              (USD) Dollar
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-primary rounded-circle p-1"></span>
+              (EUR) Euro
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-danger rounded-circle p-1"></span>
+              (CNY) Chinese Yuan
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-info rounded-circle p-1"></span>
+              (DKK) Danish Krone
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-warning rounded-circle p-1"></span>
+              (GBP) British Pound Sterling
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span
+                class="d-inline-block bg-secondary rounded-circle p-1"
+              ></span>
+              (JPY) Japanese Yen
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-light rounded-circle p-1"></span>
+              (KRW) South Korean Won
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 py-2"
+              href="#"
+            >
+              <span class="d-inline-block bg-info rounded-circle p-1"></span>
+              (NOK) Norwegian Krone
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const rates = <%- JSON.stringify(rates) %>;
+      const resultDisplay = document.getElementById("conversionResult");
+      const amountInput = document.getElementById("amountInput");
+
+      document.querySelectorAll(".dropdown-item").forEach((item) => {
+        item.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          const currencyText = item.textContent.trim();
+          const match = currencyText.match(/\((\w{3})\)/);
+          if (!match) return;
+
+          const currencyCode = match[1];
+          const amount = parseFloat(amountInput.value);
+
+          if (!amount || amount <= 0) {
+            resultDisplay.textContent = `Please enter a valid amount.`;
+            return;
+          }
+
+          if (!rates[currencyCode]) {
+            resultDisplay.textContent = `No data for ${currencyCode}`;
+            return;
+          }
+
+          const converted = amount * rates[currencyCode];
+          resultDisplay.textContent = `${amount} ${currencyCode} = ${converted.toFixed(
+            2
+          )} BRL`;
+        });
+      });
+    </script>
   </body>
 </html>
